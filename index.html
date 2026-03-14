@@ -182,43 +182,46 @@ if(data.success){
 document.getElementById("msg").style.color = "green"
 document.getElementById("msg").innerText="CRM Connected! Generating GPT Access..."
 
-// Now instead of going straight to OpenAI, we hit our backend to generate the temp oauth code
-try {
-  const codeRes = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/oauth/generate-code", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + jwtToken,
-      "ngrok-skip-browser-warning": "true"
-    },
-    body: JSON.stringify({
-      redirect_uri: oauthRedirectUri,
-      state: oauthState
-    })
-  });
+    // If no redirect URI is present, it means the user is testing the page directly (not via ChatGPT).
+    if (!oauthRedirectUri) {
+        document.getElementById("msg").style.color = "green";
+        document.getElementById("msg").innerText = "CRM Connected successfully! (No GPT redirect detected)";
+        return;
+    }
 
-  const codeData = await codeRes.json();
+    // Now instead of going straight to OpenAI, we hit our backend to generate the temp oauth code
+    try {
+      const codeRes = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/oauth/generate-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + jwtToken,
+          "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({
+          redirect_uri: oauthRedirectUri,
+          state: oauthState
+        })
+      });
 
-  if(codeData.success){
-    document.getElementById("msg").innerText="Success! Returning you to ChatGPT...";
-    setTimeout(()=>{
-      window.location.href = codeData.redirect_to;
-    }, 1500)
-  } else {
-      document.getElementById("msg").style.color = "red"
-      document.getElementById("msg").innerText="OAuth Failed: " + codeData.message
-      alert("Failed to generate GPT code: " + codeData.message)
-  }
+      const codeData = await codeRes.json();
 
-} catch (e) {
-  // If redirectUri is missing, it just means they are testing locally without the GPT.
-  if(!oauthRedirectUri){
-      document.getElementById("msg").innerText="CRM successfully validated for local testing."
-      setTimeout(()=>{
-         window.location.href="https://chat.openai.com"
-      }, 1500)
-  }
-}
+      if(codeData.success){
+        document.getElementById("msg").innerText="Success! Returning you to ChatGPT...";
+        setTimeout(()=>{
+          window.location.href = codeData.redirect_to;
+        }, 1500)
+      } else {
+          document.getElementById("msg").style.color = "red"
+          document.getElementById("msg").innerText="OAuth Failed: " + codeData.message
+          alert("Failed to generate GPT code: " + codeData.message)
+      }
+
+    } catch (e) {
+      console.error(e);
+      document.getElementById("msg").style.color = "red";
+      document.getElementById("msg").innerText = "Network Error generating code.";
+    }
 
 }else{
 document.getElementById("msg").style.color = "red"
