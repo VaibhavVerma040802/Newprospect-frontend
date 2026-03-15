@@ -507,21 +507,13 @@
       });
       const data = await res.json();
       if (data.success) {
-        showMsg("register-msg", "✅ Account created! Signing you in...", "success");
-        // Auto-login after register
-        setTimeout(async () => {
-          const loginRes = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-          });
-          const loginData = await loginRes.json();
-          if (loginData.success) {
-            jwtToken = loginData.token;
-            loggedEmail = email;
-            goToCRMStep();
-          }
-        }, 800);
+        showMsg("register-msg", "✅ Account created! Please sign in to continue.", "success");
+        // Switch to the login tab so user signs in manually
+        setTimeout(() => {
+          document.getElementById("login-email").value = email;
+          switchTab("login");
+          showMsg("login-msg", "✅ Account created! Enter your password to sign in.", "success");
+        }, 1000);
       } else {
         showMsg("register-msg", data.message || "Registration failed.", "error");
       }
