@@ -1,236 +1,612 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>ProspectFlow Login</title>
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ProspectFlow — Connect Your CRM</title>
+  <meta name="description" content="Sign in to ProspectFlow to connect your GoHighLevel CRM with your AI assistant."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body{
-font-family:Arial;
-background:#f5f5f5;
-text-align:center;
-margin-top:60px;
-}
+    :root {
+      --bg: #0d0f1a;
+      --card: #13172b;
+      --border: rgba(255,255,255,0.08);
+      --primary: #6c63ff;
+      --primary-hover: #5a52e0;
+      --secondary: #1e2340;
+      --text: #e8eaf6;
+      --text-muted: #8a8fad;
+      --success: #34d399;
+      --danger: #f87171;
+      --input-bg: #1a1f38;
+      --transition: 0.25s ease;
+    }
 
-.container{
-background:white;
-padding:30px;
-width:350px;
-margin:auto;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background-image: radial-gradient(ellipse at 20% 50%, rgba(108,99,255,0.12) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 20%, rgba(52,211,153,0.07) 0%, transparent 50%);
+    }
 
-input{
-width:90%;
-padding:10px;
-margin:10px 0;
-}
+    .wrapper {
+      width: 100%;
+      max-width: 440px;
+    }
 
-button{
-padding:10px 20px;
-background:#4CAF50;
-color:white;
-border:none;
-cursor:pointer;
-}
+    /* Logo */
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--primary), #8b82ff);
+      border-radius: 16px;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 8px 24px rgba(108,99,255,0.35);
+    }
+    .logo h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff, #c4c0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
 
-</style>
+    /* Card */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(108,99,255,0.5), transparent);
+    }
+
+    /* Steps */
+    .step { display: none; }
+    .step.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Auth Toggle */
+    .toggle-tabs {
+      display: flex;
+      background: var(--secondary);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 28px;
+      gap: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(108,99,255,0.3);
+    }
+
+    /* Form elements */
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+    }
+    .form-group { margin-bottom: 18px; }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      pointer-events: none;
+    }
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+    }
+    input:focus {
+      border-color: var(--primary);
+      background: #202549;
+      box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+    }
+    input::placeholder { color: #4d5373; }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #8b82ff);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(108,99,255,0.35);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-hover), #7c74ee);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(108,99,255,0.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-success {
+      background: linear-gradient(135deg, #059669, var(--success));
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(52,211,153,0.3);
+    }
+    .btn-success:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(52,211,153,0.4);
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading .spinner { display: block; }
+    .loading .btn-text { display: none; }
+
+    /* Status message */
+    .status-msg {
+      margin-top: 18px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      line-height: 1.5;
+      display: none;
+    }
+    .status-msg.show { display: block; animation: fadeIn 0.25s ease; }
+    .status-msg.success { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
+    .status-msg.error { background: rgba(248,113,113,0.12); color: var(--danger); border: 1px solid rgba(248,113,113,0.25); }
+    .status-msg.info { background: rgba(108,99,255,0.12); color: #a5a1ff; border: 1px solid rgba(108,99,255,0.25); }
+
+    /* CRM step extras */
+    .crm-info {
+      background: var(--secondary);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .crm-info-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .crm-info p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .crm-info strong { color: var(--text); }
+
+    .step-header {
+      margin-bottom: 24px;
+    }
+    .step-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 5px;
+    }
+    .step-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .user-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--secondary);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .user-badge strong { color: var(--text); }
+
+    /* Progress indicator */
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .progress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--secondary);
+      transition: var(--transition);
+    }
+    .progress-dot.active {
+      background: var(--primary);
+      box-shadow: 0 0 8px rgba(108,99,255,0.6);
+      width: 24px;
+      border-radius: 4px;
+    }
+    .progress-dot.done { background: var(--success); }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .footer a { color: var(--primary); text-decoration: none; }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .card { padding: 24px 20px; border-radius: 16px; }
+      .logo { margin-bottom: 24px; }
+      .logo h1 { font-size: 20px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="wrapper">
+  <!-- Logo -->
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <h1>ProspectFlow</h1>
+    <p>Connect your CRM to your AI assistant</p>
+  </div>
 
-<h2>ProspectFlow Auth</h2>
+  <!-- Progress Dots -->
+  <div class="progress-steps">
+    <div class="progress-dot active" id="dot-1"></div>
+    <div class="progress-dot" id="dot-2"></div>
+  </div>
 
-<input id="reg-email" placeholder="Registration Email">
-<input id="reg-password" type="password" placeholder="Registration Password">
+  <div class="card">
 
-<button onclick="register()">Register</button>
+    <!-- STEP 1: Login / Register -->
+    <div class="step active" id="step-auth">
 
-<hr>
+      <!-- Auth Tab Toggle -->
+      <div class="toggle-tabs">
+        <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+        <button class="tab-btn" id="tab-register" onclick="switchTab('register')">New User</button>
+      </div>
 
-<input id="email" placeholder="Login Email">
-<input id="password" type="password" placeholder="Login Password">
+      <!-- Login Form -->
+      <div id="form-login">
+        <div class="step-header">
+          <h2>Welcome back 👋</h2>
+          <p>Sign in to your ProspectFlow account to continue.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="login-email" placeholder="you@example.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="login-password" placeholder="Your password">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="login-btn" onclick="login()">
+          <span class="btn-text">Sign In →</span>
+          <div class="spinner"></div>
+        </button>
+        <div class="status-msg" id="login-msg"></div>
+      </div>
 
-<button onclick="login()">Login</button>
+      <!-- Register Form -->
+      <div id="form-register" style="display:none;">
+        <div class="step-header">
+          <h2>Create your account ✨</h2>
+          <p>Register a new ProspectFlow account to get started.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="reg-email" placeholder="you@example.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="reg-password" placeholder="Choose a strong password">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="register-btn" onclick="register()">
+          <span class="btn-text">Create Account →</span>
+          <div class="spinner"></div>
+        </button>
+        <div class="status-msg" id="register-msg"></div>
+      </div>
 
-<hr>
+    </div>
 
-<h3>Connect CRM</h3>
+    <!-- STEP 2: Connect CRM -->
+    <div class="step" id="step-crm">
+      <div class="step-header">
+        <h2>Connect your CRM 🔗</h2>
+        <p>Enter your GoHighLevel credentials to link your CRM.</p>
+      </div>
 
-<input id="token" placeholder="GHL Token">
-<input id="location" placeholder="Location ID">
+      <div class="user-badge" id="user-badge">
+        <span>👤</span> Signed in as: <strong id="logged-email">—</strong>
+      </div>
 
-<button onclick="connectCRM()">Connect CRM</button>
+      <div class="crm-info">
+        <span class="crm-info-icon">ℹ️</span>
+        <p>You can find your <strong>GHL Token</strong> and <strong>Location ID</strong> inside your GoHighLevel account under Settings → API Keys.</p>
+      </div>
 
-<p id="msg" style="color:red; font-weight:bold;"></p>
+      <div class="form-group">
+        <label class="form-label" for="ghl-token">GHL Agency Token</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔑</span>
+          <input type="text" id="ghl-token" placeholder="pit-xxxxxxxx-xxxx-xxxx-xxxx">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ghl-location">Location ID</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📍</span>
+          <input type="text" id="ghl-location" placeholder="Your GoHighLevel Location ID">
+        </div>
+      </div>
 
+      <button class="btn btn-success" id="crm-btn" onclick="connectCRM()">
+        <span class="btn-text">Connect &amp; Continue →</span>
+        <div class="spinner"></div>
+      </button>
+
+      <div class="status-msg" id="crm-msg"></div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Secured by ProspectFlow &nbsp;·&nbsp; <a href="#">Privacy Policy</a>
+  </div>
 </div>
 
-
 <script>
+  // ─── State ────────────────────────────────────────────────
+  let jwtToken = "";
+  let loggedEmail = "";
+  let oauthRedirectUri = "";
+  let oauthState = "";
 
-let jwtToken = ""
-let oauthRedirectUri = ""
-let oauthState = ""
+  // ─── On Load ──────────────────────────────────────────────
+  window.onload = () => {
+    const params = new URLSearchParams(window.location.search);
+    oauthRedirectUri = params.get("redirect_uri") || "";
+    oauthState = params.get("state") || "";
+  };
 
-// Extract OAuth parameters on load
-window.onload = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  oauthRedirectUri = urlParams.get('redirect_uri') || "";
-  oauthState = urlParams.get('state') || "";
-
-  if(oauthRedirectUri) {
-    document.getElementById("msg").style.color = "blue";
-    document.getElementById("msg").innerText = "ChatGPT Auth Flow Started. Please login and verify your CRM to continue.";
+  // ─── Tab Toggle ──────────────────────────────────────────
+  function switchTab(tab) {
+    const isLogin = tab === "login";
+    document.getElementById("form-login").style.display = isLogin ? "block" : "none";
+    document.getElementById("form-register").style.display = isLogin ? "none" : "block";
+    document.getElementById("tab-login").classList.toggle("active", isLogin);
+    document.getElementById("tab-register").classList.toggle("active", !isLogin);
   }
-}
 
-async function register(){
-const email = document.getElementById("reg-email").value
-const password = document.getElementById("reg-password").value
+  // ─── Helpers ──────────────────────────────────────────────
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.classList.toggle("loading", loading);
+    btn.disabled = loading;
+  }
 
-const res = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/register",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-email:email,
-password:password
-})
-})
+  function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = "status-msg show " + type;
+  }
 
-const data = await res.json()
-if(data.success){
-document.getElementById("msg").style.color = "green"
-document.getElementById("msg").innerText="Registration successful. You can now login."
-}else{
-document.getElementById("msg").style.color = "red"
-document.getElementById("msg").innerText=data.message
-alert("Registration failed: " + data.message)
-}
-}
+  function goToCRMStep() {
+    document.getElementById("step-auth").classList.remove("active");
+    document.getElementById("step-crm").classList.add("active");
+    document.getElementById("logged-email").textContent = loggedEmail;
+    document.getElementById("dot-1").classList.remove("active");
+    document.getElementById("dot-1").classList.add("done");
+    document.getElementById("dot-2").classList.add("active");
+  }
 
+  // ─── Register ─────────────────────────────────────────────
+  async function register() {
+    const email = document.getElementById("reg-email").value.trim();
+    const password = document.getElementById("reg-password").value;
+    if (!email || !password) { showMsg("register-msg", "Please fill in all fields.", "error"); return; }
 
-async function login(){
-
-const email = document.getElementById("email").value
-const password = document.getElementById("password").value
-
-const res = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/login",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-email:email,
-password:password
-})
-})
-
-const data = await res.json()
-
-if(data.success){
-
-jwtToken = data.token
-document.getElementById("msg").style.color = "green"
-document.getElementById("msg").innerText="Login successful"
-
-}else{
-document.getElementById("msg").style.color = "red"
-document.getElementById("msg").innerText=data.message
-alert("Login failed: " + data.message)
-}
-
-}
-
-
-
-async function connectCRM(){
-
-if (!jwtToken) {
-    alert("Please login first before connecting the CRM.");
-    return;
-}
-
-const token = document.getElementById("token").value
-const location = document.getElementById("location").value
-
-const res = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/connect-crm",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer "+jwtToken
-},
-
-body:JSON.stringify({
-ghl_token:token,
-location_id:location
-})
-
-})
-
-const data = await res.json()
-
-if(data.success){
-
-document.getElementById("msg").style.color = "green"
-document.getElementById("msg").innerText="CRM Connected! Generating GPT Access..."
-
-    // If no redirect URI is present, it means the user is testing the page directly (not via ChatGPT).
-    if (!oauthRedirectUri) {
-        document.getElementById("msg").style.color = "green";
-        document.getElementById("msg").innerText = "CRM Connected successfully! (No GPT redirect detected)";
-        return;
-    }
-
-    // Now instead of going straight to OpenAI, we hit our backend to generate the temp oauth code
+    setLoading("register-btn", true);
     try {
-      const codeRes = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/oauth/generate-code", {
+      const res = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + jwtToken,
-          "ngrok-skip-browser-warning": "true"
-        },
-        body: JSON.stringify({
-          redirect_uri: oauthRedirectUri,
-          state: oauthState
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
       });
-
-      const codeData = await codeRes.json();
-
-      if(codeData.success){
-        document.getElementById("msg").innerText="Success! Returning you to ChatGPT...";
-        setTimeout(()=>{
-          window.location.href = codeData.redirect_to;
-        }, 1500)
+      const data = await res.json();
+      if (data.success) {
+        showMsg("register-msg", "✅ Account created! Signing you in...", "success");
+        // Auto-login after register
+        setTimeout(async () => {
+          const loginRes = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+          });
+          const loginData = await loginRes.json();
+          if (loginData.success) {
+            jwtToken = loginData.token;
+            loggedEmail = email;
+            goToCRMStep();
+          }
+        }, 800);
       } else {
-          document.getElementById("msg").style.color = "red"
-          document.getElementById("msg").innerText="OAuth Failed: " + codeData.message
-          alert("Failed to generate GPT code: " + codeData.message)
+        showMsg("register-msg", data.message || "Registration failed.", "error");
       }
-
     } catch (e) {
-      console.error(e);
-      document.getElementById("msg").style.color = "red";
-      document.getElementById("msg").innerText = "Network Error generating code.";
+      showMsg("register-msg", "Network error. Please try again.", "error");
     }
+    setLoading("register-btn", false);
+  }
 
-}else{
-document.getElementById("msg").style.color = "red"
-document.getElementById("msg").innerText=data.message
-alert("CRM Connection Failed: " + data.message)
-}
+  // ─── Login ────────────────────────────────────────────────
+  async function login() {
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value;
+    if (!email || !password) { showMsg("login-msg", "Please fill in all fields.", "error"); return; }
 
-}
+    setLoading("login-btn", true);
+    try {
+      const res = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        jwtToken = data.token;
+        loggedEmail = email;
+        showMsg("login-msg", "✅ Login successful!", "success");
+        setTimeout(goToCRMStep, 600);
+      } else {
+        showMsg("login-msg", data.message || "Login failed.", "error");
+      }
+    } catch (e) {
+      showMsg("login-msg", "Network error. Please try again.", "error");
+    }
+    setLoading("login-btn", false);
+  }
 
+  // ─── Connect CRM ──────────────────────────────────────────
+  async function connectCRM() {
+    const ghlToken = document.getElementById("ghl-token").value.trim();
+    const locationId = document.getElementById("ghl-location").value.trim();
+    if (!ghlToken || !locationId) { showMsg("crm-msg", "Please fill in both fields.", "error"); return; }
+
+    setLoading("crm-btn", true);
+
+    try {
+      const res = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/connect-crm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+        body: JSON.stringify({ ghl_token: ghlToken, location_id: locationId })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showMsg("crm-msg", "✅ CRM connected!", "success");
+
+        // No OAuth redirect (direct access for testing)
+        if (!oauthRedirectUri) {
+          showMsg("crm-msg", "✅ CRM connected successfully! You can now close this page.", "success");
+          setLoading("crm-btn", false);
+          return;
+        }
+
+        // Generate OAuth code and redirect back to ChatGPT
+        const codeRes = await fetch("https://prospectflow-crm-gpt-integration-production.up.railway.app/api/oauth/generate-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+          body: JSON.stringify({ redirect_uri: oauthRedirectUri, state: oauthState })
+        });
+        const codeData = await codeRes.json();
+
+        if (codeData.success) {
+          showMsg("crm-msg", "🚀 Redirecting you to ChatGPT...", "info");
+          setTimeout(() => { window.location.href = codeData.redirect_to; }, 1200);
+        } else {
+          showMsg("crm-msg", "OAuth Error: " + codeData.message, "error");
+        }
+      } else {
+        showMsg("crm-msg", data.message || "Failed to connect CRM.", "error");
+      }
+    } catch (e) {
+      showMsg("crm-msg", "Network error. Please try again.", "error");
+    }
+    setLoading("crm-btn", false);
+  }
 </script>
 
 </body>
